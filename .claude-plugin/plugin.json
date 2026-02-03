@@ -3,23 +3,11 @@
   "description": "Enhanced fork of superpowers with Manus-style persistent planning for long-running tasks and context resets",
   "version": "0.1.0",
   "author": {
-    "name": "OniReimu",
+    "name": "OniReimu, Jesse Vincent (obra), Ahmad Othman Ammar Adi (OthmanAdi)",
     "url": "https://github.com/OniReimu"
   },
-  "homepage": "https://github.com/OniReimu/superpowers",
-  "repository": "https://github.com/OniReimu/superpowers",
+  "homepage": "https://github.com/OniReimu/superpowers-ng",
+  "repository": "https://github.com/OniReimu/superpowers-ng",
   "license": "MIT",
   "keywords": ["skills", "tdd", "debugging", "collaboration", "best-practices", "workflows", "manus", "planning", "persistent-memory"],
-  "credits": [
-    {
-      "name": "Jesse Vincent (obra)",
-      "role": "Original Superpowers author",
-      "url": "https://github.com/obra/superpowers"
-    },
-    {
-      "name": "Ahmad Othman Ammar Adi (OthmanAdi)",
-      "role": "Planning-with-files author",
-      "url": "https://github.com/OthmanAdi/planning-with-files"
-    }
-  ]
 }
