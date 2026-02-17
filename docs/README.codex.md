@@ -1,6 +1,6 @@
 # Superpowers for Codex
 
-Complete guide for using Superpowers with OpenAI Codex.
+Guide for using Superpowers with OpenAI Codex via native skill discovery.
 
 ## Quick Install
 
@@ -14,63 +14,82 @@ Fetch and follow instructions from https://raw.githubusercontent.com/obra/superp
 
 ### Prerequisites
 
-- OpenAI Codex access
-- Shell access to install files
+- OpenAI Codex CLI
+- Git
 
-### Installation Steps
+### Steps
 
-#### 1. Clone Superpowers
+1. Clone the repo:
+   ```bash
+   git clone https://github.com/obra/superpowers.git ~/.codex/superpowers
+   ```
 
-```bash
-mkdir -p ~/.codex/superpowers
-git clone https://github.com/obra/superpowers.git ~/.codex/superpowers
+2. Create the skills symlink:
+   ```bash
+   mkdir -p ~/.agents/skills
+   ln -s ~/.codex/superpowers/skills ~/.agents/skills/superpowers
+   ```
+
+3. Restart Codex.
+
+### Windows
+
+Use a junction instead of a symlink (works without Developer Mode):
+
+```powershell
+New-Item -ItemType Directory -Force -Path "$env:USERPROFILE\.agents\skills"
+cmd /c mklink /J "$env:USERPROFILE\.agents\skills\superpowers" "$env:USERPROFILE\.codex\superpowers\skills"
 ```
 
-#### 2. Install Bootstrap
+## How It Works
 
-The bootstrap file is included in the repository at `.codex/superpowers-bootstrap.md`. Codex will automatically use it from the cloned location.
-
-#### 3. Verify Installation
-
-Tell Codex:
+Codex has native skill discovery — it scans `~/.agents/skills/` at startup, parses SKILL.md frontmatter, and loads skills on demand. Superpowers skills are made visible through a single symlink:
 
 ```
-Run ~/.codex/superpowers/.codex/superpowers-codex find-skills to show available skills
+~/.agents/skills/superpowers/ → ~/.codex/superpowers/skills/
 ```
 
-You should see a list of available skills with descriptions.
+The `using-superpowers` skill is discovered automatically and enforces skill usage discipline — no additional configuration needed.
 
 ## Usage
 
-### Finding Skills
+Skills are discovered automatically. Codex activates them when:
+- You mention a skill by name (e.g., "use brainstorming")
+- The task matches a skill's description
+- The `using-superpowers` skill directs Codex to use one
 
-```
-Run ~/.codex/superpowers/.codex/superpowers-codex find-skills
-```
+### Project Skills
 
-### Loading a Skill
+Create project-specific skills in `.codex/skills/` within your project root:
 
-```
-Run ~/.codex/superpowers/.codex/superpowers-codex use-skill superpowers-ng:brainstorming
-```
-
-### Bootstrap All Skills
-
-```
-Run ~/.codex/superpowers/.codex/superpowers-codex bootstrap
+```bash
+mkdir -p .codex/skills/my-project-skill
 ```
 
-This loads the complete bootstrap with all skill information.
+Create `.codex/skills/my-project-skill/SKILL.md`:
+
+```markdown
+---
+name: my-project-skill
+description: Use when [condition] - [what it does]
+---
+
+# My Project Skill
+
+[Your skill content here]
+```
+
+Project skills have the highest priority and override both personal and superpowers skills with the same name.
 
 ### Personal Skills
 
-Create your own skills in `~/.codex/skills/`:
+Create your own skills in `~/.agents/skills/`:
 
 ```bash
-mkdir -p ~/.codex/skills/my-skill
+mkdir -p ~/.agents/skills/my-skill
 ```
 
-Create `~/.codex/skills/my-skill/SKILL.md`:
+Create `~/.agents/skills/my-skill/SKILL.md`:
 
 ```markdown
 ---
@@ -83,71 +102,85 @@ description: Use when [condition] - [what it does]
 [Your skill content here]
 ```
 
-Personal skills override superpowers skills with the same name.
+The `description` field is how Codex decides when to activate a skill automatically — write it as a clear trigger condition.
 
-## Architecture
+### Skill Priority
 
-### Codex CLI Tool
+Skills are resolved with three-tier priority:
 
-**Location:** `~/.codex/superpowers/.codex/superpowers-codex`
-
-A Node.js CLI script that provides three commands:
-- `bootstrap` - Load complete bootstrap with all skills
-- `use-skill <name>` - Load a specific skill
-- `find-skills` - List all available skills
-
-### Shared Core Module
-
-**Location:** `~/.codex/superpowers/lib/skills-core.js`
-
-The Codex implementation uses the shared `skills-core` module (ES module format) for skill discovery and parsing. This is the same module used by the OpenCode plugin, ensuring consistent behavior across platforms.
+1. **Project skills** (`.codex/skills/` in project root) - Highest priority
+2. **Personal skills** (`~/.agents/skills/`)
+3. **Superpowers skills** (`~/.agents/skills/superpowers/`) - via symlink
 
 ### Tool Mapping
 
 Skills written for Claude Code are adapted for Codex with these mappings:
 
 - `TodoWrite` → `update_plan`
-- `Task` with subagents → Tell user subagents aren't available, do work directly
-- `Skill` tool → `~/.codex/superpowers/.codex/superpowers-codex use-skill`
-- File operations → Native Codex tools
+- `Task` with subagents → `spawn_agent` + `wait` (or sequential if collab disabled)
+- `Skill` tool → native `$skill-name` mention
+- `Read`, `Write`, `Edit`, `Bash` → use native Codex equivalents
+
+## Manus Planning on Codex
+
+The `manus-planning` skill works on Codex with these considerations:
+
+- The 3-file system (`task_plan.md`, `findings.md`, `progress.md`) works identically
+- PreToolUse hooks via `docs/manus/.active` marker operate the same way
+- Use native file operations instead of Claude Code-specific tools
+- The archive system (`docs/manus/archive/`) is fully compatible
+- The 2-Action Rule (update `findings.md` after every 2 search/view operations) applies
+
+### Getting Started with Manus on Codex
+
+1. Ask Codex to "use manus-planning" or describe a complex task
+2. The skill creates the 3 files in `docs/manus/`
+3. The `.active` marker enables PreToolUse hook reminders
+4. Work persists across context resets and sessions
+
+## Ralph Integration on Codex
+
+When using Superpowers-NG with [Ralph](https://github.com/frankbria/ralph-claude-code):
+
+- Brainstorming Phase 0 (existing design detection) works natively
+- Manus planning files persist across Ralph loop resets
+- Skills are autonomous-mode aware — no user input needed in Ralph loops
+- Auto-resume via `.active` marker detection works with Ralph's `--continue` model
 
 ## Updating
 
 ```bash
-cd ~/.codex/superpowers
-git pull
+cd ~/.codex/superpowers && git pull
 ```
+
+Skills update instantly through the symlink.
+
+## Uninstalling
+
+```bash
+rm ~/.agents/skills/superpowers
+```
+
+**Windows (PowerShell):**
+```powershell
+Remove-Item "$env:USERPROFILE\.agents\skills\superpowers"
+```
+
+Optionally delete the clone: `rm -rf ~/.codex/superpowers` (Windows: `Remove-Item -Recurse -Force "$env:USERPROFILE\.codex\superpowers"`).
 
 ## Troubleshooting
 
-### Skills not found
+### Skills not showing up
 
-1. Verify installation: `ls ~/.codex/superpowers/skills`
-2. Check CLI works: `~/.codex/superpowers/.codex/superpowers-codex find-skills`
-3. Verify skills have SKILL.md files
+1. Verify the symlink: `ls -la ~/.agents/skills/superpowers`
+2. Check skills exist: `ls ~/.codex/superpowers/skills`
+3. Restart Codex — skills are discovered at startup
 
-### CLI script not executable
+### Windows junction issues
 
-```bash
-chmod +x ~/.codex/superpowers/.codex/superpowers-codex
-```
-
-### Node.js errors
-
-The CLI script requires Node.js. Verify:
-
-```bash
-node --version
-```
-
-Should show v14 or higher (v18+ recommended for ES module support).
+Junctions normally work without special permissions. If creation fails, try running PowerShell as administrator.
 
 ## Getting Help
 
 - Report issues: https://github.com/obra/superpowers/issues
 - Main documentation: https://github.com/obra/superpowers
-- Blog post: https://blog.fsck.com/2025/10/27/skills-for-openai-codex/
-
-## Note
-
-Codex support is experimental and may require refinement based on user feedback. If you encounter issues, please report them on GitHub.

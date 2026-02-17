@@ -52,7 +52,7 @@ The core philosophy: **Test-Driven Development**, **YAGNI**, **DRY**, and **syst
 
 ## Installation
 
-**Note:** Installation instructions will be updated once the marketplace is configured.
+**Note:** Installation differs by platform. Claude Code or Cursor have built-in plugin marketplaces. Codex and OpenCode require manual setup.
 
 ### Claude Code (Planned)
 
@@ -73,39 +73,45 @@ cd superpowers-ng
 # (Instructions TBD based on Claude Code local plugin support)
 ```
 
+### Cursor (via Plugin Marketplace)
+
+In Cursor Agent chat, install from marketplace:
+
+```text
+/plugin-add superpowers-ng
+```
+
+### Codex
+
+See [docs/README.codex.md](docs/README.codex.md) for detailed instructions.
+
+### OpenCode
+
+See [docs/README.opencode.md](docs/README.opencode.md) for detailed instructions.
+
 ### Verify Installation
 
-Check that commands appear:
-
-```bash
-/help
-```
-
-You should see:
-```
-/superpowers-ng:brainstorm - Interactive design refinement
-/superpowers-ng:write-plan - Create implementation plan
-/superpowers-ng:execute-plan - Execute plan in batches
-/superpowers-ng:manus-plan - Start Manus-style persistent planning
-```
+Start a new session in your chosen platform and ask for something that should trigger a skill (for example, "help me plan this feature" or "let's debug this issue"). The agent should automatically invoke the relevant superpowers skill.
 
 ## The Enhanced Workflow
 
-1. **brainstorming** - Refines rough ideas, presents design in sections. Saves design document.
+1. **brainstorming** - Activates before writing code. Refines rough ideas through questions, explores alternatives, presents design in sections for validation. Saves design document.
 
-2. **using-git-worktrees** - Creates isolated workspace on new branch.
+2. **using-git-worktrees** - Activates after design approval. Creates isolated workspace on new branch, runs project setup, verifies clean test baseline.
 
 3. **Choose your planning system:**
    - **Native:** `writing-plans` → `executing-plans` for short tasks
    - **Manus:** `manus-planning` for complex/long-running tasks
 
-4. **subagent-driven-development** or **executing-plans** - Implements with two-stage review or batch execution.
+4. **subagent-driven-development** or **executing-plans** - Dispatches fresh subagent per task with two-stage review (spec compliance, then code quality), or executes in batches with human checkpoints.
 
-5. **test-driven-development** - Enforces RED-GREEN-REFACTOR cycle.
+5. **test-driven-development** - Enforces RED-GREEN-REFACTOR: write failing test, watch it fail, write minimal code, watch it pass, commit.
 
-6. **requesting-code-review** - Reviews against plan between tasks.
+6. **requesting-code-review** - Reviews against plan, reports issues by severity. Critical issues block progress.
 
-7. **finishing-a-development-branch** - Verifies tests, presents merge options.
+7. **finishing-a-development-branch** - Verifies tests, presents options (merge/PR/keep/discard), cleans up worktree.
+
+**The agent checks for relevant skills before any task.** Mandatory workflows, not suggestions.
 
 ## What's Inside
 
