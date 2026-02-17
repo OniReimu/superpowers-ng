@@ -58,16 +58,6 @@ Skills are discovered automatically. Codex activates them when:
 - The task matches a skill's description
 - The `using-superpowers` skill directs Codex to use one
 
-### CLI Tool (Advanced)
-
-The Codex CLI tool at `~/.codex/superpowers/.codex/superpowers-codex` provides additional commands:
-
-```
-Run ~/.codex/superpowers/.codex/superpowers-codex find-skills
-Run ~/.codex/superpowers/.codex/superpowers-codex use-skill superpowers-ng:brainstorming
-Run ~/.codex/superpowers/.codex/superpowers-codex bootstrap
-```
-
 ### Project Skills
 
 Create project-specific skills in `.codex/skills/` within your project root:
@@ -89,11 +79,7 @@ description: Use when [condition] - [what it does]
 [Your skill content here]
 ```
 
-Project skills have the highest priority and override both personal and superpowers skills with the same name. Use the `project:` prefix to explicitly load a project skill:
-
-```
-Run ~/.codex/superpowers/.codex/superpowers-codex use-skill project:my-project-skill
-```
+Project skills have the highest priority and override both personal and superpowers skills with the same name.
 
 ### Personal Skills
 
@@ -120,16 +106,46 @@ The `description` field is how Codex decides when to activate a skill automatica
 
 ### Skill Priority
 
-Skills are resolved with three-tier priority: project (`.codex/skills/` in project root) > personal (`~/.agents/skills/`) > superpowers (`~/.codex/superpowers/skills/`).
+Skills are resolved with three-tier priority:
+
+1. **Project skills** (`.codex/skills/` in project root) - Highest priority
+2. **Personal skills** (`~/.agents/skills/`)
+3. **Superpowers skills** (`~/.agents/skills/superpowers/`) - via symlink
 
 ### Tool Mapping
 
 Skills written for Claude Code are adapted for Codex with these mappings:
 
 - `TodoWrite` → `update_plan`
-- `Task` with subagents → Tell user subagents aren't available, do work directly
-- `Skill` tool → `~/.codex/superpowers/.codex/superpowers-codex use-skill`
-- File operations → Native Codex tools
+- `Task` with subagents → `spawn_agent` + `wait` (or sequential if collab disabled)
+- `Skill` tool → native `$skill-name` mention
+- `Read`, `Write`, `Edit`, `Bash` → use native Codex equivalents
+
+## Manus Planning on Codex
+
+The `manus-planning` skill works on Codex with these considerations:
+
+- The 3-file system (`task_plan.md`, `findings.md`, `progress.md`) works identically
+- PreToolUse hooks via `docs/manus/.active` marker operate the same way
+- Use native file operations instead of Claude Code-specific tools
+- The archive system (`docs/manus/archive/`) is fully compatible
+- The 2-Action Rule (update `findings.md` after every 2 search/view operations) applies
+
+### Getting Started with Manus on Codex
+
+1. Ask Codex to "use manus-planning" or describe a complex task
+2. The skill creates the 3 files in `docs/manus/`
+3. The `.active` marker enables PreToolUse hook reminders
+4. Work persists across context resets and sessions
+
+## Ralph Integration on Codex
+
+When using Superpowers-NG with [Ralph](https://github.com/frankbria/ralph-claude-code):
+
+- Brainstorming Phase 0 (existing design detection) works natively
+- Manus planning files persist across Ralph loop resets
+- Skills are autonomous-mode aware — no user input needed in Ralph loops
+- Auto-resume via `.active` marker detection works with Ralph's `--continue` model
 
 ## Updating
 
