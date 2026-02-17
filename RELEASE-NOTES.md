@@ -347,7 +347,7 @@ This fork is distributed separately from original superpowers:
 
 ---
 
-**Full Changelog:** https://github.com/OniReimu/superpowers/compare/obra:main...OniReimu:main
-**Issues:** https://github.com/OniReimu/superpowers/issues
+**Full Changelog:** https://github.com/OniReimu/superpowers-ng/compare/obra:main...OniReimu:main
+**Issues:** https://github.com/OniReimu/superpowers-ng/issues
 **Original Superpowers:** https://github.com/obra/superpowers
 **Planning-with-files:** https://github.com/OthmanAdi/planning-with-files
