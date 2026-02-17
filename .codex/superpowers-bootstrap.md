@@ -13,10 +13,11 @@ When skills reference tools you don't have, substitute your equivalent tools:
 - `Skill` tool → `~/.codex/superpowers/.codex/superpowers-codex use-skill` command (already available)
 - `Read`, `Write`, `Edit`, `Bash` → Use your native tools with similar functions
 
-**Skills naming:**
-- Superpowers skills: `superpowers-ng:skill-name` (from ~/.codex/superpowers/skills/)
+**Skills naming (priority order):**
+- Project skills: `project:skill-name` (from .codex/skills/ in project root)
 - Personal skills: `skill-name` (from ~/.codex/skills/)
-- Personal skills override superpowers skills when names match
+- Superpowers skills: `superpowers-ng:skill-name` (from ~/.codex/superpowers/skills/)
+- Project skills override personal, which override superpowers when names match
 
 **Critical Rules:**
 - Before ANY task, review the skills list (shown below)
@@ -26,8 +27,9 @@ When skills reference tools you don't have, substitute your equivalent tools:
 - NEVER skip mandatory workflows (brainstorming before coding, TDD, systematic debugging)
 
 **Skills location:**
-- Superpowers skills: ~/.codex/superpowers/skills/
+- Project skills: .codex/skills/ in project root (highest priority)
 - Personal skills: ~/.codex/skills/ (override superpowers when names match)
+- Superpowers skills: ~/.codex/superpowers/skills/
 
 IF A SKILL APPLIES TO YOUR TASK, YOU DO NOT HAVE A CHOICE. YOU MUST USE IT.
 </EXTREMELY_IMPORTANT>

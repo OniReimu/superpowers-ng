@@ -25,6 +25,11 @@ Quick setup to enable superpowers skills in Codex.
    </EXTREMELY_IMPORTANT>
    ```
 
+3. **Optional: Create project-local skills directory** (for per-project skills):
+   ```bash
+   mkdir -p .codex/skills
+   ```
+
 ## Verification
 
 Test the installation:

@@ -62,6 +62,33 @@ Run ~/.codex/superpowers/.codex/superpowers-codex bootstrap
 
 This loads the complete bootstrap with all skill information.
 
+### Project Skills
+
+Create project-specific skills in `.codex/skills/` within your project root:
+
+```bash
+mkdir -p .codex/skills/my-project-skill
+```
+
+Create `.codex/skills/my-project-skill/SKILL.md`:
+
+```markdown
+---
+name: my-project-skill
+description: Use when [condition] - [what it does]
+---
+
+# My Project Skill
+
+[Your skill content here]
+```
+
+Project skills have the highest priority and override both personal and superpowers skills with the same name. Use the `project:` prefix to explicitly load a project skill:
+
+```
+Run ~/.codex/superpowers/.codex/superpowers-codex use-skill project:my-project-skill
+```
+
 ### Personal Skills
 
 Create your own skills in `~/.codex/skills/`:
@@ -95,6 +122,8 @@ A Node.js CLI script that provides three commands:
 - `bootstrap` - Load complete bootstrap with all skills
 - `use-skill <name>` - Load a specific skill
 - `find-skills` - List all available skills
+
+Skills are resolved with three-tier priority: project (`.codex/skills/` in project root) > personal (`~/.codex/skills/`) > superpowers (`~/.codex/superpowers/skills/`).
 
 ### Shared Core Module
 

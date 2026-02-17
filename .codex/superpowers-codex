@@ -9,18 +9,26 @@ const skillsCore = require('../lib/skills-core');
 const homeDir = os.homedir();
 const superpowersSkillsDir = path.join(homeDir, '.codex', 'superpowers', 'skills');
 const personalSkillsDir = path.join(homeDir, '.codex', 'skills');
+const projectSkillsDir = path.join(process.cwd(), '.codex', 'skills');
 const bootstrapFile = path.join(homeDir, '.codex', 'superpowers', '.codex', 'superpowers-bootstrap.md');
 const superpowersRepoDir = path.join(homeDir, '.codex', 'superpowers');
 
 // Utility functions
 function printSkill(skillPath, sourceType) {
     const skillFile = path.join(skillPath, 'SKILL.md');
-    const relPath = sourceType === 'personal'
-        ? path.relative(personalSkillsDir, skillPath)
-        : path.relative(superpowersSkillsDir, skillPath);
+    let relPath;
+    if (sourceType === 'project') {
+        relPath = path.relative(projectSkillsDir, skillPath);
+    } else if (sourceType === 'personal') {
+        relPath = path.relative(personalSkillsDir, skillPath);
+    } else {
+        relPath = path.relative(superpowersSkillsDir, skillPath);
+    }
 
     // Print skill name with namespace
-    if (sourceType === 'personal') {
+    if (sourceType === 'project') {
+        console.log(`project:${relPath.replace(/\\/g, '/')}`); // Project skills get project: namespace
+    } else if (sourceType === 'personal') {
         console.log(relPath.replace(/\\/g, '/')); // Personal skills are not namespaced
     } else {
         console.log(`superpowers-ng:${relPath.replace(/\\/g, '/')}`); // Superpowers skills get superpowers-ng namespace
@@ -41,15 +49,25 @@ function runFindSkills() {
 
     const foundSkills = new Set();
 
-    // Find personal skills first (these take precedence)
+    // Find project skills first (highest priority)
+    const projectSkills = skillsCore.findSkillsInDir(projectSkillsDir, 'project', 2);
+    for (const skill of projectSkills) {
+        const relPath = path.relative(projectSkillsDir, skill.path);
+        foundSkills.add(relPath);
+        printSkill(skill.path, 'project');
+    }
+
+    // Find personal skills (medium priority, skip if shadowed by project)
     const personalSkills = skillsCore.findSkillsInDir(personalSkillsDir, 'personal', 2);
     for (const skill of personalSkills) {
         const relPath = path.relative(personalSkillsDir, skill.path);
-        foundSkills.add(relPath);
-        printSkill(skill.path, 'personal');
+        if (!foundSkills.has(relPath)) {
+            foundSkills.add(relPath);
+            printSkill(skill.path, 'personal');
+        }
     }
 
-    // Find superpowers skills (only if not already found in personal)
+    // Find superpowers skills (lowest priority, skip if shadowed)
     const superpowersSkills = skillsCore.findSkillsInDir(superpowersSkillsDir, 'superpowers', 1);
     for (const skill of superpowersSkills) {
         const relPath = path.relative(superpowersSkillsDir, skill.path);
@@ -62,9 +80,10 @@ function runFindSkills() {
     console.log('  superpowers-codex use-skill <skill-name>   # Load a specific skill');
     console.log('');
     console.log('Skill naming:');
+    console.log('  Project skills: project:skill-name (from .codex/skills/ in project root)');
     console.log('  Superpowers skills: superpowers-ng:skill-name (from ~/.codex/superpowers/skills/)');
     console.log('  Personal skills: skill-name (from ~/.codex/skills/)');
-    console.log('  Personal skills override superpowers skills when names match.');
+    console.log('  Priority: project > personal > superpowers (higher overrides lower).');
     console.log('');
     console.log('Note: All skills are disclosed at session start via bootstrap.');
 }
@@ -128,7 +147,8 @@ function runUseSkill(skillName) {
         console.log('Usage: superpowers-codex use-skill <skill-name>');
         console.log('Examples:');
         console.log('  superpowers-codex use-skill superpowers-ng:brainstorming  # Load superpowers skill');
-        console.log('  superpowers-codex use-skill brainstorming              # Load personal skill (or superpowers if not found)');
+        console.log('  superpowers-codex use-skill project:my-skill             # Load project-local skill');
+        console.log('  superpowers-codex use-skill brainstorming              # Load skill (project > personal > superpowers)');
         console.log('  superpowers-codex use-skill my-custom-skill            # Load personal skill');
         return;
     }
@@ -136,11 +156,16 @@ function runUseSkill(skillName) {
     // Handle namespaced skill names
     let actualSkillPath;
     let forceSuperpowers = false;
+    let forceProject = false;
 
     if (skillName.startsWith('superpowers-ng:')) {
         // Remove the superpowers-ng: namespace prefix
         actualSkillPath = skillName.substring('superpowers-ng:'.length);
         forceSuperpowers = true;
+    } else if (skillName.startsWith('project:')) {
+        // Remove the project: namespace prefix
+        actualSkillPath = skillName.substring('project:'.length);
+        forceProject = true;
     } else {
         actualSkillPath = skillName;
     }
@@ -168,15 +193,39 @@ function runUseSkill(skillName) {
 
     let skillFile = null;
 
-    // If superpowers: namespace was used, only check superpowers skills
+    // If superpowers-ng: namespace was used, only check superpowers skills
     if (forceSuperpowers) {
         if (fs.existsSync(superpowersSkillsDir)) {
             const superpowersPath = path.join(superpowersSkillsDir, actualSkillPath);
             skillFile = findSkillFile(superpowersPath);
         }
+    } else if (forceProject) {
+        // If project: namespace was used, only check project skills
+        if (fs.existsSync(projectSkillsDir)) {
+            const projectPath = path.join(projectSkillsDir, actualSkillPath);
+            skillFile = findSkillFile(projectPath);
+            if (skillFile) {
+                console.log(`# Loading project skill: project:${actualSkillPath}`);
+                console.log(`# Source: ${skillFile}`);
+                console.log('');
+            }
+        }
     } else {
-        // First check personal skills directory (takes precedence)
-        if (fs.existsSync(personalSkillsDir)) {
+        // Priority resolution: project > personal > superpowers
+
+        // First check project skills directory (highest priority)
+        if (fs.existsSync(projectSkillsDir)) {
+            const projectPath = path.join(projectSkillsDir, actualSkillPath);
+            skillFile = findSkillFile(projectPath);
+            if (skillFile) {
+                console.log(`# Loading project skill: project:${actualSkillPath}`);
+                console.log(`# Source: ${skillFile}`);
+                console.log('');
+            }
+        }
+
+        // Then check personal skills directory
+        if (!skillFile && fs.existsSync(personalSkillsDir)) {
             const personalPath = path.join(personalSkillsDir, actualSkillPath);
             skillFile = findSkillFile(personalPath);
             if (skillFile) {
@@ -221,7 +270,9 @@ function runUseSkill(skillName) {
 
     // Display skill header with clean info
     const displayName = forceSuperpowers ? `superpowers-ng:${actualSkillPath}` :
-                       (skillFile.includes(personalSkillsDir) ? actualSkillPath : `superpowers-ng:${actualSkillPath}`);
+                       forceProject ? `project:${actualSkillPath}` :
+                       (skillFile.includes(projectSkillsDir) ? `project:${actualSkillPath}` :
+                       skillFile.includes(personalSkillsDir) ? actualSkillPath : `superpowers-ng:${actualSkillPath}`);
 
     const skillDirectory = path.dirname(skillFile);
 
