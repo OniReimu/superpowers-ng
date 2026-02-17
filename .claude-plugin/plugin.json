@@ -6,8 +6,8 @@
     "name": "OniReimu",
     "url": "https://github.com/OniReimu"
   },
-  "homepage": "https://github.com/OniReimu/superpowers",
-  "repository": "https://github.com/OniReimu/superpowers",
+  "homepage": "https://github.com/OniReimu/superpowers-ng",
+  "repository": "https://github.com/OniReimu/superpowers-ng",
   "license": "MIT",
   "keywords": ["skills", "tdd", "debugging", "collaboration", "best-practices", "workflows", "manus", "planning", "persistent-memory"],
   "credits": [

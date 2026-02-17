@@ -219,6 +219,6 @@ MIT License - see LICENSE file for details
 
 ## Support
 
-- **Issues**: https://github.com/OniReimu/superpowers/issues
+- **Issues**: https://github.com/OniReimu/superpowers-ng/issues
 - **Original Superpowers**: https://github.com/obra/superpowers
 - **Planning-with-files**: https://github.com/OthmanAdi/planning-with-files
