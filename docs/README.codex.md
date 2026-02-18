@@ -10,6 +10,8 @@ Tell Codex:
 Fetch and follow instructions from https://raw.githubusercontent.com/OniReimu/superpowers-ng/refs/heads/main/.codex/INSTALL.md
 ```
 
+The install guide covers both global and project-local installation. See [.codex/INSTALL.md](../.codex/INSTALL.md) for the full instructions.
+
 ## Manual Installation
 
 ### Prerequisites
@@ -17,7 +19,7 @@ Fetch and follow instructions from https://raw.githubusercontent.com/OniReimu/su
 - OpenAI Codex CLI
 - Git
 
-### Steps
+### Global (all projects)
 
 1. Clone the repo:
    ```bash
@@ -32,24 +34,56 @@ Fetch and follow instructions from https://raw.githubusercontent.com/OniReimu/su
 
 3. Restart Codex.
 
+### Project-Local (single repo)
+
+1. Add as a submodule (or clone into `.codex/superpowers-ng`):
+   ```bash
+   git submodule add https://github.com/OniReimu/superpowers-ng.git .codex/superpowers-ng
+   ```
+
+2. Create the project-local skills symlink:
+   ```bash
+   mkdir -p .agents/skills
+   ln -s ../../.codex/superpowers-ng/skills .agents/skills/superpowers-ng
+   ```
+
+3. Restart Codex.
+
+See [.codex/INSTALL.md](../.codex/INSTALL.md) for Windows instructions, local-clone option, and collaborator setup.
+
 ### Windows
 
 Use a junction instead of a symlink (works without Developer Mode):
 
+**Global:**
 ```powershell
 New-Item -ItemType Directory -Force -Path "$env:USERPROFILE\.agents\skills"
-cmd /c mklink /J "$env:USERPROFILE\.agents\skills\superpowers-ng" "$env:USERPROFILE\.codex\superpowers\skills"
+cmd /c mklink /J "$env:USERPROFILE\.agents\skills\superpowers-ng" "$env:USERPROFILE\.codex\superpowers-ng\skills"
+```
+
+**Project-local:**
+```powershell
+New-Item -ItemType Directory -Force -Path ".agents\skills"
+cmd /c mklink /J ".agents\skills\superpowers-ng" ".codex\superpowers-ng\skills"
 ```
 
 ## How It Works
 
-Codex has native skill discovery — it scans `~/.agents/skills/` at startup, parses SKILL.md frontmatter, and loads skills on demand. Superpowers skills are made visible through a single symlink:
+Codex has native skill discovery — it scans for `SKILL.md` files in multiple locations at startup, parses YAML frontmatter, and loads skills on demand.
+
+**Global installation** places superpowers skills in `~/.agents/skills/` (User scope):
 
 ```
 ~/.agents/skills/superpowers-ng/ → ~/.codex/superpowers-ng/skills/
 ```
 
-The `using-superpowers` skill is discovered automatically and enforces skill usage discipline — no additional configuration needed.
+**Project-local installation** places them in `.agents/skills/` at the repo root (Repo scope):
+
+```
+<project>/.agents/skills/superpowers-ng/ → ../../.codex/superpowers-ng/skills/
+```
+
+Repo scope has the highest priority — project-local superpowers override a global installation of the same skills. The `using-superpowers` skill is discovered automatically and enforces skill usage discipline — no additional configuration needed.
 
 ## Usage
 
@@ -58,15 +92,15 @@ Skills are discovered automatically. Codex activates them when:
 - The task matches a skill's description
 - The `using-superpowers` skill directs Codex to use one
 
-### Project Skills
+### Custom Project Skills
 
-Create project-specific skills in `.codex/skills/` within your project root:
+Create additional project-specific skills in `.codex/skills/` or `.agents/skills/` within your project root:
 
 ```bash
-mkdir -p .codex/skills/my-project-skill
+mkdir -p .agents/skills/my-project-skill
 ```
 
-Create `.codex/skills/my-project-skill/SKILL.md`:
+Create `.agents/skills/my-project-skill/SKILL.md`:
 
 ```markdown
 ---
@@ -106,11 +140,14 @@ The `description` field is how Codex decides when to activate a skill automatica
 
 ### Skill Priority
 
-Skills are resolved with three-tier priority:
+Skills are resolved with a hierarchical priority:
 
-1. **Project skills** (`.codex/skills/` in project root) - Highest priority
-2. **Personal skills** (`~/.agents/skills/`)
-3. **Superpowers skills** (`~/.agents/skills/superpowers-ng/`) - via symlink
+1. **Project skills** (`.agents/skills/` or `.codex/skills/` in project root) — Repo scope, highest priority
+2. **Personal skills** (`~/.agents/skills/`) — User scope
+3. **System skills** (`$CODEX_HOME/skills/.system`) — bundled by OpenAI
+4. **Admin skills** (`/etc/codex/skills/`) — lowest priority
+
+When superpowers-ng is installed globally, its skills live at tier 2 (User). When installed project-locally, they move to tier 1 (Repo) and take highest priority.
 
 ### Tool Mapping
 
@@ -149,16 +186,44 @@ When using Superpowers-NG with [Ralph](https://github.com/frankbria/ralph-claude
 
 ## Updating
 
+**Global:**
 ```bash
 cd ~/.codex/superpowers-ng && git pull
+```
+
+**Project-local (submodule):**
+```bash
+cd .codex/superpowers-ng && git pull origin main
+cd ../.. && git add .codex/superpowers-ng && git commit -m "Update superpowers-ng"
+```
+
+**Project-local (clone):**
+```bash
+cd .codex/superpowers-ng && git pull
 ```
 
 Skills update instantly through the symlink.
 
 ## Uninstalling
 
+**Global:**
 ```bash
 rm ~/.agents/skills/superpowers-ng
+rm -rf ~/.codex/superpowers-ng
+```
+
+**Project-local (submodule):**
+```bash
+git submodule deinit .codex/superpowers-ng
+git rm .codex/superpowers-ng
+rm .agents/skills/superpowers-ng
+git commit -m "Remove superpowers-ng"
+```
+
+**Project-local (clone):**
+```bash
+rm .agents/skills/superpowers-ng
+rm -rf .codex/superpowers-ng
 ```
 
 **Windows (PowerShell):**
@@ -166,14 +231,14 @@ rm ~/.agents/skills/superpowers-ng
 Remove-Item "$env:USERPROFILE\.agents\skills\superpowers-ng"
 ```
 
-Optionally delete the clone: `rm -rf ~/.codex/superpowers-ng` (Windows: `Remove-Item -Recurse -Force "$env:USERPROFILE\.codex\superpowers"`).
-
 ## Troubleshooting
 
 ### Skills not showing up
 
-1. Verify the symlink: `ls -la ~/.agents/skills/superpowers-ng`
-2. Check skills exist: `ls ~/.codex/superpowers-ng/skills`
+1. Verify the symlink:
+   - Global: `ls -la ~/.agents/skills/superpowers-ng`
+   - Project-local: `ls -la .agents/skills/superpowers-ng`
+2. Check skills exist: `ls` the symlink target directory
 3. Restart Codex — skills are discovered at startup
 
 ### Windows junction issues
