@@ -21,13 +21,13 @@ Fetch and follow instructions from https://raw.githubusercontent.com/OniReimu/su
 
 1. Clone the repo:
    ```bash
-   git clone https://github.com/OniReimu/superpowers-ng.git ~/.codex/superpowers
+   git clone https://github.com/OniReimu/superpowers-ng.git ~/.codex/superpowers-ng
    ```
 
 2. Create the skills symlink:
    ```bash
    mkdir -p ~/.agents/skills
-   ln -s ~/.codex/superpowers/skills ~/.agents/skills/superpowers
+   ln -s ~/.codex/superpowers-ng/skills ~/.agents/skills/superpowers-ng
    ```
 
 3. Restart Codex.
@@ -38,7 +38,7 @@ Use a junction instead of a symlink (works without Developer Mode):
 
 ```powershell
 New-Item -ItemType Directory -Force -Path "$env:USERPROFILE\.agents\skills"
-cmd /c mklink /J "$env:USERPROFILE\.agents\skills\superpowers" "$env:USERPROFILE\.codex\superpowers\skills"
+cmd /c mklink /J "$env:USERPROFILE\.agents\skills\superpowers-ng" "$env:USERPROFILE\.codex\superpowers\skills"
 ```
 
 ## How It Works
@@ -46,7 +46,7 @@ cmd /c mklink /J "$env:USERPROFILE\.agents\skills\superpowers" "$env:USERPROFILE
 Codex has native skill discovery — it scans `~/.agents/skills/` at startup, parses SKILL.md frontmatter, and loads skills on demand. Superpowers skills are made visible through a single symlink:
 
 ```
-~/.agents/skills/superpowers/ → ~/.codex/superpowers/skills/
+~/.agents/skills/superpowers-ng/ → ~/.codex/superpowers-ng/skills/
 ```
 
 The `using-superpowers` skill is discovered automatically and enforces skill usage discipline — no additional configuration needed.
@@ -110,7 +110,7 @@ Skills are resolved with three-tier priority:
 
 1. **Project skills** (`.codex/skills/` in project root) - Highest priority
 2. **Personal skills** (`~/.agents/skills/`)
-3. **Superpowers skills** (`~/.agents/skills/superpowers/`) - via symlink
+3. **Superpowers skills** (`~/.agents/skills/superpowers-ng/`) - via symlink
 
 ### Tool Mapping
 
@@ -150,7 +150,7 @@ When using Superpowers-NG with [Ralph](https://github.com/frankbria/ralph-claude
 ## Updating
 
 ```bash
-cd ~/.codex/superpowers && git pull
+cd ~/.codex/superpowers-ng && git pull
 ```
 
 Skills update instantly through the symlink.
@@ -158,22 +158,22 @@ Skills update instantly through the symlink.
 ## Uninstalling
 
 ```bash
-rm ~/.agents/skills/superpowers
+rm ~/.agents/skills/superpowers-ng
 ```
 
 **Windows (PowerShell):**
 ```powershell
-Remove-Item "$env:USERPROFILE\.agents\skills\superpowers"
+Remove-Item "$env:USERPROFILE\.agents\skills\superpowers-ng"
 ```
 
-Optionally delete the clone: `rm -rf ~/.codex/superpowers` (Windows: `Remove-Item -Recurse -Force "$env:USERPROFILE\.codex\superpowers"`).
+Optionally delete the clone: `rm -rf ~/.codex/superpowers-ng` (Windows: `Remove-Item -Recurse -Force "$env:USERPROFILE\.codex\superpowers"`).
 
 ## Troubleshooting
 
 ### Skills not showing up
 
-1. Verify the symlink: `ls -la ~/.agents/skills/superpowers`
-2. Check skills exist: `ls ~/.codex/superpowers/skills`
+1. Verify the symlink: `ls -la ~/.agents/skills/superpowers-ng`
+2. Check skills exist: `ls ~/.codex/superpowers-ng/skills`
 3. Restart Codex — skills are discovered at startup
 
 ### Windows junction issues
