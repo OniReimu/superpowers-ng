@@ -7,7 +7,7 @@ Complete guide for using Superpowers with [OpenCode.ai](https://opencode.ai).
 Tell OpenCode:
 
 ```
-Clone https://github.com/OniReimu/superpowers-ng to ~/.config/opencode/superpowers, then create directory ~/.config/opencode/plugins, then symlink ~/.config/opencode/superpowers/.opencode/plugins/superpowers.js to ~/.config/opencode/plugins/superpowers.js, then symlink ~/.config/opencode/superpowers/skills to ~/.config/opencode/skills/superpowers, then restart opencode.
+Clone https://github.com/OniReimu/superpowers-ng to ~/.config/opencode/superpowers-ng, then create directory ~/.config/opencode/plugins, then symlink ~/.config/opencode/superpowers-ng/.opencode/plugins/superpowers.js to ~/.config/opencode/plugins/superpowers.js, then symlink ~/.config/opencode/superpowers-ng/skills to ~/.config/opencode/skills/superpowers-ng, then restart opencode.
 ```
 
 ## Manual Installation
@@ -21,10 +21,10 @@ Clone https://github.com/OniReimu/superpowers-ng to ~/.config/opencode/superpowe
 
 ```bash
 # 1. Install Superpowers (or update existing)
-if [ -d ~/.config/opencode/superpowers ]; then
-  cd ~/.config/opencode/superpowers && git pull
+if [ -d ~/.config/opencode/superpowers-ng ]; then
+  cd ~/.config/opencode/superpowers-ng && git pull
 else
-  git clone https://github.com/OniReimu/superpowers-ng.git ~/.config/opencode/superpowers
+  git clone https://github.com/OniReimu/superpowers-ng.git ~/.config/opencode/superpowers-ng
 fi
 
 # 2. Create directories
@@ -32,11 +32,11 @@ mkdir -p ~/.config/opencode/plugins ~/.config/opencode/skills
 
 # 3. Remove old symlinks/directories if they exist
 rm -f ~/.config/opencode/plugins/superpowers.js
-rm -rf ~/.config/opencode/skills/superpowers
+rm -rf ~/.config/opencode/skills/superpowers-ng
 
 # 4. Create symlinks
-ln -s ~/.config/opencode/superpowers/.opencode/plugins/superpowers.js ~/.config/opencode/plugins/superpowers.js
-ln -s ~/.config/opencode/superpowers/skills ~/.config/opencode/skills/superpowers
+ln -s ~/.config/opencode/superpowers-ng/.opencode/plugins/superpowers.js ~/.config/opencode/plugins/superpowers.js
+ln -s ~/.config/opencode/superpowers-ng/skills ~/.config/opencode/skills/superpowers-ng
 
 # 5. Restart OpenCode
 ```
@@ -45,7 +45,7 @@ ln -s ~/.config/opencode/superpowers/skills ~/.config/opencode/skills/superpower
 
 ```bash
 ls -l ~/.config/opencode/plugins/superpowers.js
-ls -l ~/.config/opencode/skills/superpowers
+ls -l ~/.config/opencode/skills/superpowers-ng
 ```
 
 Both should show symlinks pointing to the superpowers directory.
@@ -66,7 +66,7 @@ Run as Administrator, or with Developer Mode enabled:
 
 ```cmd
 :: 1. Install Superpowers
-git clone https://github.com/OniReimu/superpowers-ng.git "%USERPROFILE%\.config\opencode\superpowers"
+git clone https://github.com/OniReimu/superpowers-ng.git "%USERPROFILE%\.config\opencode\superpowers-ng"
 
 :: 2. Create directories
 mkdir "%USERPROFILE%\.config\opencode\plugins" 2>nul
@@ -74,13 +74,13 @@ mkdir "%USERPROFILE%\.config\opencode\skills" 2>nul
 
 :: 3. Remove existing links (safe for reinstalls)
 del "%USERPROFILE%\.config\opencode\plugins\superpowers.js" 2>nul
-rmdir "%USERPROFILE%\.config\opencode\skills\superpowers" 2>nul
+rmdir "%USERPROFILE%\.config\opencode\skills\superpowers-ng" 2>nul
 
 :: 4. Create plugin symlink (requires Developer Mode or Admin)
-mklink "%USERPROFILE%\.config\opencode\plugins\superpowers.js" "%USERPROFILE%\.config\opencode\superpowers\.opencode\plugins\superpowers.js"
+mklink "%USERPROFILE%\.config\opencode\plugins\superpowers.js" "%USERPROFILE%\.config\opencode\superpowers-ng\.opencode\plugins\superpowers.js"
 
 :: 5. Create skills junction (works without special privileges)
-mklink /J "%USERPROFILE%\.config\opencode\skills\superpowers" "%USERPROFILE%\.config\opencode\superpowers\skills"
+mklink /J "%USERPROFILE%\.config\opencode\skills\superpowers-ng" "%USERPROFILE%\.config\opencode\superpowers-ng\skills"
 
 :: 6. Restart OpenCode
 ```
@@ -91,7 +91,7 @@ Run as Administrator, or with Developer Mode enabled:
 
 ```powershell
 # 1. Install Superpowers
-git clone https://github.com/OniReimu/superpowers-ng.git "$env:USERPROFILE\.config\opencode\superpowers"
+git clone https://github.com/OniReimu/superpowers-ng.git "$env:USERPROFILE\.config\opencode\superpowers-ng"
 
 # 2. Create directories
 New-Item -ItemType Directory -Force -Path "$env:USERPROFILE\.config\opencode\plugins"
@@ -99,13 +99,13 @@ New-Item -ItemType Directory -Force -Path "$env:USERPROFILE\.config\opencode\ski
 
 # 3. Remove existing links (safe for reinstalls)
 Remove-Item "$env:USERPROFILE\.config\opencode\plugins\superpowers.js" -Force -ErrorAction SilentlyContinue
-Remove-Item "$env:USERPROFILE\.config\opencode\skills\superpowers" -Force -ErrorAction SilentlyContinue
+Remove-Item "$env:USERPROFILE\.config\opencode\skills\superpowers-ng" -Force -ErrorAction SilentlyContinue
 
 # 4. Create plugin symlink (requires Developer Mode or Admin)
-New-Item -ItemType SymbolicLink -Path "$env:USERPROFILE\.config\opencode\plugins\superpowers.js" -Target "$env:USERPROFILE\.config\opencode\superpowers\.opencode\plugins\superpowers.js"
+New-Item -ItemType SymbolicLink -Path "$env:USERPROFILE\.config\opencode\plugins\superpowers.js" -Target "$env:USERPROFILE\.config\opencode\superpowers-ng\.opencode\plugins\superpowers.js"
 
 # 5. Create skills junction (works without special privileges)
-New-Item -ItemType Junction -Path "$env:USERPROFILE\.config\opencode\skills\superpowers" -Target "$env:USERPROFILE\.config\opencode\superpowers\skills"
+New-Item -ItemType Junction -Path "$env:USERPROFILE\.config\opencode\skills\superpowers-ng" -Target "$env:USERPROFILE\.config\opencode\superpowers-ng\skills"
 
 # 6. Restart OpenCode
 ```
@@ -116,20 +116,20 @@ Note: Git Bash's native `ln` command copies files instead of creating symlinks. 
 
 ```bash
 # 1. Install Superpowers
-git clone https://github.com/OniReimu/superpowers-ng.git ~/.config/opencode/superpowers
+git clone https://github.com/OniReimu/superpowers-ng.git ~/.config/opencode/superpowers-ng
 
 # 2. Create directories
 mkdir -p ~/.config/opencode/plugins ~/.config/opencode/skills
 
 # 3. Remove existing links (safe for reinstalls)
 rm -f ~/.config/opencode/plugins/superpowers.js 2>/dev/null
-rm -rf ~/.config/opencode/skills/superpowers 2>/dev/null
+rm -rf ~/.config/opencode/skills/superpowers-ng 2>/dev/null
 
 # 4. Create plugin symlink (requires Developer Mode or Admin)
-cmd //c "mklink \"$(cygpath -w ~/.config/opencode/plugins/superpowers.js)\" \"$(cygpath -w ~/.config/opencode/superpowers/.opencode/plugins/superpowers.js)\""
+cmd //c "mklink \"$(cygpath -w ~/.config/opencode/plugins/superpowers.js)\" \"$(cygpath -w ~/.config/opencode/superpowers-ng/.opencode/plugins/superpowers.js)\""
 
 # 5. Create skills junction (works without special privileges)
-cmd //c "mklink /J \"$(cygpath -w ~/.config/opencode/skills/superpowers)\" \"$(cygpath -w ~/.config/opencode/superpowers/skills)\""
+cmd //c "mklink /J \"$(cygpath -w ~/.config/opencode/skills/superpowers-ng)\" \"$(cygpath -w ~/.config/opencode/superpowers-ng/skills)\""
 
 # 6. Restart OpenCode
 ```
@@ -233,7 +233,7 @@ OpenCode discovers skills from these locations:
 
 1. **Project skills** (`.opencode/skills/`) - Highest priority
 2. **Personal skills** (`~/.config/opencode/skills/`)
-3. **Superpowers skills** (`~/.config/opencode/skills/superpowers/`) - via symlink
+3. **Superpowers skills** (`~/.config/opencode/skills/superpowers-ng/`) - via symlink
 
 You can force resolution to a specific level:
 - `project:skill-name` - Force project skill
@@ -248,7 +248,7 @@ The plugin automatically injects superpowers context via the `experimental.chat.
 
 ### Native Skills Integration
 
-Superpowers uses OpenCode's native `skill` tool for skill discovery and loading. Skills are symlinked into `~/.config/opencode/skills/superpowers/` so they appear alongside your personal and project skills.
+Superpowers uses OpenCode's native `skill` tool for skill discovery and loading. Skills are symlinked into `~/.config/opencode/skills/superpowers-ng/` so they appear alongside your personal and project skills.
 
 ### Tool Mapping
 
@@ -263,7 +263,7 @@ Skills written for Claude Code are automatically adapted for OpenCode. The boots
 
 ### Plugin Structure
 
-**Location:** `~/.config/opencode/superpowers/.opencode/plugins/superpowers.js`
+**Location:** `~/.config/opencode/superpowers-ng/.opencode/plugins/superpowers.js`
 
 **Components:**
 - `experimental.chat.system.transform` hook for bootstrap injection
@@ -271,14 +271,14 @@ Skills written for Claude Code are automatically adapted for OpenCode. The boots
 
 ### Skills
 
-**Location:** `~/.config/opencode/skills/superpowers/` (symlink to `~/.config/opencode/superpowers/skills/`)
+**Location:** `~/.config/opencode/skills/superpowers-ng/` (symlink to `~/.config/opencode/superpowers-ng/skills/`)
 
 Skills are discovered by OpenCode's native skill system. Each skill has a `SKILL.md` file with YAML frontmatter.
 
 ## Updating
 
 ```bash
-cd ~/.config/opencode/superpowers
+cd ~/.config/opencode/superpowers-ng
 git pull
 ```
 
@@ -288,14 +288,14 @@ Restart OpenCode to load the updates.
 
 ### Plugin not loading
 
-1. Check plugin exists: `ls ~/.config/opencode/superpowers/.opencode/plugins/superpowers.js`
+1. Check plugin exists: `ls ~/.config/opencode/superpowers-ng/.opencode/plugins/superpowers.js`
 2. Check symlink/junction: `ls -l ~/.config/opencode/plugins/` (macOS/Linux) or `dir /AL %USERPROFILE%\.config\opencode\plugins` (Windows)
 3. Check OpenCode logs: `opencode run "test" --print-logs --log-level DEBUG`
 4. Look for plugin loading message in logs
 
 ### Skills not found
 
-1. Verify skills symlink: `ls -l ~/.config/opencode/skills/superpowers` (should point to superpowers/skills/)
+1. Verify skills symlink: `ls -l ~/.config/opencode/skills/superpowers-ng` (should point to superpowers/skills/)
 2. Use OpenCode's `skill` tool to list available skills
 3. Check skill structure: each skill needs a `SKILL.md` file with valid frontmatter
 
@@ -307,7 +307,7 @@ If you see `Cannot find module` errors on Windows:
 
 ### Bootstrap not appearing
 
-1. Verify using-superpowers skill exists: `ls ~/.config/opencode/superpowers/skills/using-superpowers/SKILL.md`
+1. Verify using-superpowers skill exists: `ls ~/.config/opencode/superpowers-ng/skills/using-superpowers/SKILL.md`
 2. Check OpenCode version supports `experimental.chat.system.transform` hook
 3. Restart OpenCode after plugin changes
 

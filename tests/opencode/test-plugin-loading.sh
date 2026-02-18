@@ -32,7 +32,7 @@ fi
 
 # Test 2: Verify lib/skills-core.js is in place
 echo "Test 2: Checking skills-core.js..."
-if [ -f "$HOME/.config/opencode/superpowers/lib/skills-core.js" ]; then
+if [ -f "$HOME/.config/opencode/superpowers-ng/lib/skills-core.js" ]; then
     echo "  [PASS] skills-core.js exists"
 else
     echo "  [FAIL] skills-core.js not found"
@@ -41,7 +41,7 @@ fi
 
 # Test 3: Verify skills directory is populated
 echo "Test 3: Checking skills directory..."
-skill_count=$(find "$HOME/.config/opencode/superpowers/skills" -name "SKILL.md" | wc -l)
+skill_count=$(find "$HOME/.config/opencode/superpowers-ng/skills" -name "SKILL.md" | wc -l)
 if [ "$skill_count" -gt 0 ]; then
     echo "  [PASS] Found $skill_count skills installed"
 else
@@ -51,7 +51,7 @@ fi
 
 # Test 4: Check using-superpowers skill exists (critical for bootstrap)
 echo "Test 4: Checking using-superpowers skill (required for bootstrap)..."
-if [ -f "$HOME/.config/opencode/superpowers/skills/using-superpowers/SKILL.md" ]; then
+if [ -f "$HOME/.config/opencode/superpowers-ng/skills/using-superpowers/SKILL.md" ]; then
     echo "  [PASS] using-superpowers skill exists"
 else
     echo "  [FAIL] using-superpowers skill not found (required for bootstrap)"
@@ -60,7 +60,7 @@ fi
 
 # Test 5: Verify plugin JavaScript syntax (basic check)
 echo "Test 5: Checking plugin JavaScript syntax..."
-plugin_file="$HOME/.config/opencode/superpowers/.opencode/plugins/superpowers.js"
+plugin_file="$HOME/.config/opencode/superpowers-ng/.opencode/plugins/superpowers.js"
 if node --check "$plugin_file" 2>/dev/null; then
     echo "  [PASS] Plugin JavaScript syntax is valid"
 else
