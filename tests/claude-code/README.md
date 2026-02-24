@@ -106,6 +106,20 @@ Unit test for manus pretool hook (~1 second):
 - Verifies hook emits reminder when .active exists
 - Verifies reminder includes plan preview
 
+#### test-planning-bootstrap.sh
+Unit test for session planning bootstrap (~1 second):
+- Verifies native mode when `.active` is missing
+- Verifies manus continuation summary when `.active` exists
+- Verifies missing/empty plan files are auto-recovered
+- Verifies recovery is logged in `progress.md`
+
+#### test-session-start-bootstrap.sh
+Unit test for SessionStart context injection (~1 second):
+- Verifies `hooks/session-start.sh` emits valid JSON payload
+- Verifies `Planning mode: NATIVE` appears when `.active` is absent
+- Verifies `Planning mode: MANUS` appears when `.active` exists
+- Verifies active task title appears in SessionStart context
+
 #### test-ralph-status-blocks.sh
 Unit test for Ralph status block parsing (~1 second):
 - Verifies status block extraction from output
@@ -168,7 +182,7 @@ Combined manus + Ralph workflow test (~2-3 minutes):
 ### Slim Test Suite
 
 The new manus/Ralph tests form a slim test suite targeting ~10-15 minutes total runtime:
-- 2 fast unit tests (< 1 minute total)
+- 4 fast unit tests (< 1 minute total)
 - 3 focused integration tests (10-12 minutes total)
 - Tests core superpowers-ng differentiators:
   - Manus-styled planning with session persistence

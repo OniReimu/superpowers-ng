@@ -83,7 +83,21 @@ Codex has native skill discovery — it scans for `SKILL.md` files in multiple l
 <project>/.agents/skills/superpowers-ng/ → ../../.codex/superpowers-ng/skills/
 ```
 
-Repo scope has the highest priority — project-local superpowers override a global installation of the same skills. The `using-superpowers` skill is discovered automatically and enforces skill usage discipline — no additional configuration needed.
+Repo scope has the highest priority — project-local superpowers override a global installation of the same skills.
+
+## Session Bootstrap (Required)
+
+Codex has no startup hooks, so use `AGENTS.md` to run bootstrap steps on every session start:
+
+1. Invoke `superpowers-ng:using-superpowers`
+2. Run planning bootstrap script:
+   - Global install: `$HOME/.codex/superpowers-ng/hooks/planning-bootstrap.sh --mode codex`
+   - Project-local install: `.codex/superpowers-ng/hooks/planning-bootstrap.sh --mode codex`
+3. Follow the printed mode:
+   - `Planning mode: MANUS ...` -> read `docs/manus/{task_plan,progress,findings}.md` and continue
+   - `Planning mode: NATIVE` -> use native lightweight plan and ask whether to enable manus
+
+The bootstrap script also auto-recovers missing Manus files when `.active` exists and logs recovery in `progress.md`.
 
 ## Usage
 

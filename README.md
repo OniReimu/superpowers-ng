@@ -81,6 +81,11 @@ In Cursor Agent chat, install from marketplace:
 /plugin-add superpowers-ng
 ```
 
+Cursor uses the same hook pipeline as Claude Code. On each SessionStart it now:
+- checks `docs/manus/.active`
+- resumes Manus by reading `task_plan.md` / `progress.md` / `findings.md` when active
+- falls back to native startup flow with a lightweight plan + "enable manus?" prompt when inactive
+
 ### Codex
 
 See [docs/README.codex.md](docs/README.codex.md) for detailed instructions.
@@ -88,6 +93,11 @@ See [docs/README.codex.md](docs/README.codex.md) for detailed instructions.
 ### OpenCode
 
 See [docs/README.opencode.md](docs/README.opencode.md) for detailed instructions.
+
+OpenCode now uses the same planning bootstrap logic as Claude/Cursor/Codex:
+- checks `docs/manus/.active` at startup context injection
+- emits `Planning mode: MANUS` for active Manus tasks (with continuation snapshot)
+- emits `Planning mode: NATIVE` when no active task exists
 
 ### Verify Installation
 

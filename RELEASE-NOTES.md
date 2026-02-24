@@ -1,5 +1,31 @@
 # Superpowers-NG Release Notes
 
+## Unreleased
+
+### Added
+
+**Session-start planning bootstrap across Claude Code, Cursor, Codex, and OpenCode**
+
+- Added `hooks/planning-bootstrap.sh` as a shared startup bootstrap:
+  - Checks `docs/manus/.active` at session start
+  - Emits explicit mode line: `Planning mode: MANUS ...` or `Planning mode: NATIVE`
+  - On active Manus tasks, reads `task_plan/progress/findings` and provides continuation snapshot + next-step guidance
+  - On inactive tasks, provides native 3-line plan starter and asks whether to enable manus
+- Added automatic recovery for partial Manus state:
+  - If `.active` exists but `task_plan.md`, `findings.md`, or `progress.md` is missing/empty, bootstrap recreates files from templates
+  - Recovery event is appended to `progress.md`
+- Updated Claude/Cursor SessionStart path to inject planning bootstrap context from `hooks/session-start.sh`
+- Added Codex startup bootstrap instructions via `.codex/AGENTS.md` and updated Codex install docs
+- Updated OpenCode plugin bootstrap injection to run shared planning bootstrap via `experimental.chat.system.transform`
+
+### Tests
+
+- Added `tests/claude-code/test-planning-bootstrap.sh`
+- Added `tests/claude-code/test-session-start-bootstrap.sh`
+- Updated `tests/claude-code/run-skill-tests.sh` and test docs
+- Added `tests/opencode/test-bootstrap-planning.sh`
+- Updated `tests/opencode/run-tests.sh` and setup fixture copy behavior
+
 ## Upstream v4.3.0 (2026-02-12)
 
 This fix should dramatically improve superpowers skills compliance and should reduce the chances of Claude entering its native plan mode unintentionally.
