@@ -45,6 +45,7 @@ while [[ $# -gt 0 ]]; do
             echo "Tests:"
             echo "  test-plugin-loading.sh  Verify plugin installation and structure"
             echo "  test-skills-core.sh     Test skills-core.js library functions"
+            echo "  test-bootstrap-planning.sh  Test planning mode bootstrap injection"
             echo "  test-tools.sh           Test use_skill and find_skills tools (integration)"
             echo "  test-priority.sh        Test skill priority resolution (integration)"
             exit 0
@@ -61,6 +62,7 @@ done
 tests=(
     "test-plugin-loading.sh"
     "test-skills-core.sh"
+    "test-bootstrap-planning.sh"
 )
 
 # Integration tests (require OpenCode)

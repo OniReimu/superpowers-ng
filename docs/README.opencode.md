@@ -244,7 +244,14 @@ You can force resolution to a specific level:
 
 ### Automatic Context Injection
 
-The plugin automatically injects superpowers context via the `experimental.chat.system.transform` hook. This adds the "using-superpowers" skill content to the system prompt on every request.
+The plugin automatically injects superpowers context via the `experimental.chat.system.transform` hook. This adds:
+- the `using-superpowers` startup guidance
+- planning bootstrap status from shared `hooks/planning-bootstrap.sh`
+
+Planning bootstrap behavior:
+- If `docs/manus/.active` exists: emits `Planning mode: MANUS ...`, reads Manus files, and provides continuation guidance
+- If `.active` is absent: emits `Planning mode: NATIVE` with a lightweight native-plan startup flow
+- If `.active` exists but Manus files are missing/empty: auto-recovers template files and logs recovery in `progress.md`
 
 ### Native Skills Integration
 
@@ -268,6 +275,7 @@ Skills written for Claude Code are automatically adapted for OpenCode. The boots
 **Components:**
 - `experimental.chat.system.transform` hook for bootstrap injection
 - Reads and injects the "using-superpowers" skill content
+- Runs shared planning bootstrap (`hooks/planning-bootstrap.sh`) using the current project directory
 
 ### Skills
 

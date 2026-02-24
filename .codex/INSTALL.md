@@ -40,20 +40,23 @@ Installs superpowers-ng for all projects on your machine.
    cmd /c mklink /J "$env:USERPROFILE\.agents\skills\superpowers-ng" "$env:USERPROFILE\.codex\superpowers-ng\skills"
    ```
 
-3. **Bootstrap the `using-superpowers` skill:**
+3. **Bootstrap `using-superpowers` + planning bootstrap:**
 
-   The symlink makes skills discoverable, but Codex won't auto-invoke them at conversation start. Add a bootstrap instruction to `AGENTS.md` so the agent always loads the skill system first:
+   The symlink makes skills discoverable, but Codex won't auto-invoke startup logic. Add a bootstrap block to `AGENTS.md` so every session begins with skill loading plus `.active` state detection:
 
    ```bash
    cat >> ~/.codex/AGENTS.md << 'EOF'
 
    <!-- superpowers-ng bootstrap -->
-   At the start of every conversation, before any response (including clarifying questions), invoke the `superpowers-ng:using-superpowers` skill.
+   At the start of every conversation, before any response (including clarifying questions):
+   1) Invoke the `superpowers-ng:using-superpowers` skill.
+   2) Run `$HOME/.codex/superpowers-ng/hooks/planning-bootstrap.sh --mode codex`.
+   3) Follow the reported planning mode (`MANUS` resumes docs/manus files, `NATIVE` uses native plan + asks whether to enable manus).
    <!-- /superpowers-ng bootstrap -->
    EOF
    ```
 
-   > **Why?** Codex does not support hooks. In Claude Code, a `SessionStart` hook auto-injects this skill. In Codex, `AGENTS.md` is the only way to achieve the same effect.
+   > **Why?** Codex does not support hooks. In Claude Code, `SessionStart` handles this automatically. In Codex, `AGENTS.md` is the reliable startup mechanism.
 
 4. **Restart Codex** (quit and relaunch the CLI) to discover the skills.
 
@@ -113,13 +116,16 @@ Version-pinned and committed to the repo. All collaborators get the same superpo
    cmd /c mklink /J ".agents\skills\superpowers-ng" ".codex\superpowers-ng\skills"
    ```
 
-3. **Bootstrap the `using-superpowers` skill:**
+3. **Bootstrap `using-superpowers` + planning bootstrap:**
 
    ```bash
    cat >> .codex/AGENTS.md << 'EOF'
 
    <!-- superpowers-ng bootstrap -->
-   At the start of every conversation, before any response (including clarifying questions), invoke the `superpowers-ng:using-superpowers` skill.
+   At the start of every conversation, before any response (including clarifying questions):
+   1) Invoke the `superpowers-ng:using-superpowers` skill.
+   2) Run `.codex/superpowers-ng/hooks/planning-bootstrap.sh --mode codex`.
+   3) Follow the reported planning mode (`MANUS` resumes docs/manus files, `NATIVE` uses native plan + asks whether to enable manus).
    <!-- /superpowers-ng bootstrap -->
    EOF
    ```
@@ -149,13 +155,16 @@ Not committed to the repo. Good for trying superpowers-ng in a single project wi
    ln -s ../../.codex/superpowers-ng/skills .agents/skills/superpowers-ng
    ```
 
-3. **Bootstrap the `using-superpowers` skill:**
+3. **Bootstrap `using-superpowers` + planning bootstrap:**
 
    ```bash
    cat >> .codex/AGENTS.md << 'EOF'
 
    <!-- superpowers-ng bootstrap -->
-   At the start of every conversation, before any response (including clarifying questions), invoke the `superpowers-ng:using-superpowers` skill.
+   At the start of every conversation, before any response (including clarifying questions):
+   1) Invoke the `superpowers-ng:using-superpowers` skill.
+   2) Run `.codex/superpowers-ng/hooks/planning-bootstrap.sh --mode codex`.
+   3) Follow the reported planning mode (`MANUS` resumes docs/manus files, `NATIVE` uses native plan + asks whether to enable manus).
    <!-- /superpowers-ng bootstrap -->
    EOF
    ```

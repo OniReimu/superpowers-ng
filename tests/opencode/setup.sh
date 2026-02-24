@@ -14,8 +14,11 @@ export OPENCODE_CONFIG_DIR="$TEST_HOME/.config/opencode"
 
 # Install plugin to test location
 mkdir -p "$HOME/.config/opencode/superpowers-ng"
-cp -r "$REPO_ROOT/lib" "$HOME/.config/opencode/superpowers-ng/"
+if [ -d "$REPO_ROOT/lib" ]; then
+    cp -r "$REPO_ROOT/lib" "$HOME/.config/opencode/superpowers-ng/"
+fi
 cp -r "$REPO_ROOT/skills" "$HOME/.config/opencode/superpowers-ng/"
+cp -r "$REPO_ROOT/hooks" "$HOME/.config/opencode/superpowers-ng/"
 
 # Copy plugin directory
 mkdir -p "$HOME/.config/opencode/superpowers-ng/.opencode/plugins"

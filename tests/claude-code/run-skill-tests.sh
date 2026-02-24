@@ -59,6 +59,8 @@ while [[ $# -gt 0 ]]; do
             echo "Tests:"
             echo "  test-subagent-driven-development.sh         Test skill loading and requirements"
             echo "  test-manus-pretool-hook.sh                  Test manus pretool hook unit"
+            echo "  test-planning-bootstrap.sh                  Test session planning bootstrap unit"
+            echo "  test-session-start-bootstrap.sh             Test SessionStart bootstrap injection"
             echo "  test-ralph-status-blocks.sh                 Test ralph status block parsing"
             echo ""
             echo "Integration Tests (use --integration):"
@@ -80,6 +82,8 @@ done
 tests=(
     "test-subagent-driven-development.sh"
     "test-manus-pretool-hook.sh"
+    "test-planning-bootstrap.sh"
+    "test-session-start-bootstrap.sh"
     "test-ralph-status-blocks.sh"
 )
 

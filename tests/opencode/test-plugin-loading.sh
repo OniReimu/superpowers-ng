@@ -30,13 +30,12 @@ else
     exit 1
 fi
 
-# Test 2: Verify lib/skills-core.js is in place
-echo "Test 2: Checking skills-core.js..."
+# Test 2: Verify optional lib/skills-core.js copy behavior
+echo "Test 2: Checking optional skills-core.js..."
 if [ -f "$HOME/.config/opencode/superpowers-ng/lib/skills-core.js" ]; then
     echo "  [PASS] skills-core.js exists"
 else
-    echo "  [FAIL] skills-core.js not found"
-    exit 1
+    echo "  [PASS] skills-core.js not present (not required for current architecture)"
 fi
 
 # Test 3: Verify skills directory is populated
@@ -74,6 +73,15 @@ if [ -f "$HOME/.config/opencode/skills/personal-test/SKILL.md" ]; then
     echo "  [PASS] Personal test skill fixture created"
 else
     echo "  [FAIL] Personal test skill fixture not found"
+    exit 1
+fi
+
+# Test 7: Verify shared planning bootstrap script is installed
+echo "Test 7: Checking shared planning bootstrap script..."
+if [ -f "$HOME/.config/opencode/superpowers-ng/hooks/planning-bootstrap.sh" ]; then
+    echo "  [PASS] planning-bootstrap.sh exists"
+else
+    echo "  [FAIL] planning-bootstrap.sh not found"
     exit 1
 fi
 

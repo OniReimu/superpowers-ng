@@ -8,6 +8,7 @@
 import path from 'path';
 import fs from 'fs';
 import os from 'os';
+import { execFileSync } from 'child_process';
 import { fileURLToPath } from 'url';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -49,8 +50,38 @@ const normalizePath = (p, homeDir) => {
 export const SuperpowersPlugin = async ({ client, directory }) => {
   const homeDir = os.homedir();
   const superpowersSkillsDir = path.resolve(__dirname, '../../skills');
+  const planningBootstrapScript = path.resolve(__dirname, '../../hooks/planning-bootstrap.sh');
+  const projectDir = directory || process.cwd();
   const envConfigDir = normalizePath(process.env.OPENCODE_CONFIG_DIR, homeDir);
   const configDir = envConfigDir || path.join(homeDir, '.config/opencode');
+
+  // Run shared planning bootstrap (.active detection, resume/native guidance).
+  const getPlanningBootstrapContent = () => {
+    if (!fs.existsSync(planningBootstrapScript)) {
+      return 'Planning mode: NATIVE\n\nPlanning bootstrap script not found; continue with native planning flow.';
+    }
+
+    try {
+      const output = execFileSync(planningBootstrapScript, ['--mode', 'opencode'], {
+        cwd: projectDir,
+        encoding: 'utf8',
+        stdio: ['ignore', 'pipe', 'pipe'],
+        timeout: 4000,
+        maxBuffer: 1024 * 1024
+      }).trim();
+
+      if (output.length > 0) {
+        return output;
+      }
+      return 'Planning mode: NATIVE\n\nPlanning bootstrap returned empty output; continue with native planning flow.';
+    } catch (error) {
+      const stderr = typeof error?.stderr === 'string'
+        ? error.stderr.trim()
+        : (error?.stderr ? String(error.stderr).trim() : '');
+      const suffix = stderr ? `\n\nBootstrap error: ${stderr}` : '';
+      return `Planning mode: NATIVE\n\nPlanning bootstrap failed; continue with native planning flow.${suffix}`;
+    }
+  };
 
   // Helper to generate bootstrap content
   const getBootstrapContent = () => {
@@ -60,6 +91,7 @@ export const SuperpowersPlugin = async ({ client, directory }) => {
 
     const fullContent = fs.readFileSync(skillPath, 'utf8');
     const { content } = extractAndStripFrontmatter(fullContent);
+    const planningBootstrap = getPlanningBootstrapContent();
 
     const toolMapping = `**Tool Mapping for OpenCode:**
 When skills reference tools you don't have, substitute OpenCode equivalents:
@@ -78,6 +110,10 @@ You have superpowers.
 **IMPORTANT: The using-superpowers skill content is included below. It is ALREADY LOADED - you are currently following it. Do NOT use the skill tool to load "using-superpowers" again - that would be redundant.**
 
 ${content}
+
+**Session planning bootstrap (always check before starting work):**
+
+${planningBootstrap}
 
 ${toolMapping}
 </EXTREMELY_IMPORTANT>`;

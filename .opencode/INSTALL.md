@@ -35,7 +35,11 @@ ln -s ~/.config/opencode/superpowers-ng/skills ~/.config/opencode/skills/superpo
 
 ### 4. Restart OpenCode
 
-Restart OpenCode. The plugin will automatically inject superpowers context.
+Restart OpenCode. The plugin will automatically inject:
+- `using-superpowers` context
+- planning bootstrap mode from `hooks/planning-bootstrap.sh`
+  - `Planning mode: MANUS` when `docs/manus/.active` exists
+  - `Planning mode: NATIVE` when no active Manus task exists
 
 Verify by asking: "do you have superpowers?"
 
